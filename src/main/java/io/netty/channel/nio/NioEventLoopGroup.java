@@ -30,7 +30,7 @@ import java.nio.channels.spi.SelectorProvider;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 
-/**
+/**实现了线程池接口 ScheduledThreadPoolExecutor
  * {@link MultithreadEventLoopGroup} implementations which is used for NIO {@link Selector} based {@link Channel}s.
  */
 public class NioEventLoopGroup extends MultithreadEventLoopGroup {
@@ -40,7 +40,7 @@ public class NioEventLoopGroup extends MultithreadEventLoopGroup {
      * the {@link SelectorProvider} which is returned by {@link SelectorProvider#provider()}.
      */
     public NioEventLoopGroup() {
-        this(0);
+        this(0);            // 会使用父类的默认值，静态代码段加载的，机器core核数的2倍
     }
 
     /**
@@ -122,7 +122,7 @@ public class NioEventLoopGroup extends MultithreadEventLoopGroup {
     }
 
     @Override
-    protected EventLoop newChild(Executor executor, Object... args) throws Exception {
+    protected EventLoop newChild(Executor executor, Object... args) throws Exception {      // 通过NioEventLoop代理自己
         return new NioEventLoop(this, executor, (SelectorProvider) args[0],
                 ((SelectStrategyFactory) args[1]).newSelectStrategy(), (RejectedExecutionHandler) args[2]);
     }
