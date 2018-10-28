@@ -30,7 +30,7 @@ import java.nio.channels.spi.SelectorProvider;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 
-/**实现了线程池接口 ScheduledThreadPoolExecutor
+/**实现了线程池接口 ScheduledThreadPoolExecutor， 可以注册Channel，让线程组里面的线程去监听
  * {@link MultithreadEventLoopGroup} implementations which is used for NIO {@link Selector} based {@link Channel}s.
  */
 public class NioEventLoopGroup extends MultithreadEventLoopGroup {

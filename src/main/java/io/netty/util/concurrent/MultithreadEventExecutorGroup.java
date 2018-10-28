@@ -76,18 +76,18 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
             executor = new ThreadPerTaskExecutor(newDefaultThreadFactory());
         }
 
-        children = new EventExecutor[nThreads];
+        children = new EventExecutor[nThreads];                 // 线程池大小
 
         for (int i = 0; i < nThreads; i ++) {
             boolean success = false;
             try {
-                children[i] = newChild(executor, args);         // 创建事件处理子线程
+                children[i] = newChild(executor, args);         // 创建事件处理子线程    创建 NioEventLoop
                 success = true;
             } catch (Exception e) {
                 // TODO: Think about if this is a good exception type
                 throw new IllegalStateException("failed to create a child event loop", e);
             } finally {
-                if (!success) {
+                if (!success) {                 // 失败时候取消
                     for (int j = 0; j < i; j ++) {
                         children[j].shutdownGracefully();
                     }
@@ -108,7 +108,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
             }
         }
 
-        chooser = chooserFactory.newChooser(children);
+        chooser = chooserFactory.newChooser(children);          // 任务分配策略，传入线程数组    DefaultEventExecutorChooserFactory
 
         final FutureListener<Object> terminationListener = new FutureListener<Object>() {
             @Override
@@ -120,7 +120,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
         };
 
         for (EventExecutor e: children) {
-            e.terminationFuture().addListener(terminationListener);
+            e.terminationFuture().addListener(terminationListener);     // 对每个线程注册清理回调
         }
 
         Set<EventExecutor> childrenSet = new LinkedHashSet<EventExecutor>(children.length);
