@@ -210,16 +210,16 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
     }
 
     private int doWriteInternal(ChannelOutboundBuffer in, Object msg) throws Exception {
-        if (msg instanceof ByteBuf) {
+        if (msg instanceof ByteBuf) {           // 写ByteBuf类型数据
             ByteBuf buf = (ByteBuf) msg;
             if (!buf.isReadable()) {
                 in.remove();
                 return 0;
             }
 
-            final int localFlushedAmount = doWriteBytes(buf);
+            final int localFlushedAmount = doWriteBytes(buf);       // 子类实现，不同发送方式
             if (localFlushedAmount > 0) {
-                in.progress(localFlushedAmount);
+                in.progress(localFlushedAmount);        // 发送进展
                 if (!buf.isReadable()) {
                     in.remove();
                 }
@@ -249,19 +249,19 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
 
     @Override
     protected void doWrite(ChannelOutboundBuffer in) throws Exception {
-        int writeSpinCount = config().getWriteSpinCount();
+        int writeSpinCount = config().getWriteSpinCount();      // 设置好的writeSpin次数，允许一点次数之后切换其他socket操作
         do {
             Object msg = in.current();
-            if (msg == null) {
+            if (msg == null) {          // 所有消息已经写出去了
                 // Wrote all messages.
-                clearOpWrite();
+                clearOpWrite();         // 清除半包标示
                 // Directly return here so incompleteWrite(...) is not called.
                 return;
             }
-            writeSpinCount -= doWriteInternal(in, msg);
-        } while (writeSpinCount > 0);
+            writeSpinCount -= doWriteInternal(in, msg);     // 写消息
+        } while (writeSpinCount > 0);       // 写
 
-        incompleteWrite(writeSpinCount < 0);
+        incompleteWrite(writeSpinCount < 0);    // 不完整的写
     }
 
     @Override

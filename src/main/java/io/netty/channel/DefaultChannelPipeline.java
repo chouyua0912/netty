@@ -39,7 +39,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
-/**
+/**包含head，tail，组成处理pipeline
  * The default {@link ChannelPipeline} implementation.  It is usually created
  * by a {@link Channel} implementation when the {@link Channel} is created.
  */
@@ -61,8 +61,8 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     private static final AtomicReferenceFieldUpdater<DefaultChannelPipeline, MessageSizeEstimator.Handle> ESTIMATOR =
             AtomicReferenceFieldUpdater.newUpdater(
                     DefaultChannelPipeline.class, MessageSizeEstimator.Handle.class, "estimatorHandle");
-    final AbstractChannelHandlerContext head;
-    final AbstractChannelHandlerContext tail;
+    final AbstractChannelHandlerContext head;       // 链表组成的
+    final AbstractChannelHandlerContext tail;       // 组成pipeline的链表
 
     private final Channel channel;
     private final ChannelFuture succeededFuture;
@@ -202,7 +202,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     }
 
     @Override
-    public final ChannelPipeline addLast(EventExecutorGroup group, String name, ChannelHandler handler) {
+    public final ChannelPipeline addLast(EventExecutorGroup group, String name, ChannelHandler handler) {   // 添加channelHandler到队列尾
         final AbstractChannelHandlerContext newCtx;
         synchronized (this) {
             checkMultiplicity(handler);
@@ -397,7 +397,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     }
 
     @Override
-    public final ChannelPipeline addLast(EventExecutorGroup executor, ChannelHandler... handlers) {
+    public final ChannelPipeline addLast(EventExecutorGroup executor, ChannelHandler... handlers) {     // 最近处理器ChannelHandler到末尾
         if (handlers == null) {
             throw new NullPointerException("handlers");
         }

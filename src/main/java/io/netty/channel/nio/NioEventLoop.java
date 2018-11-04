@@ -117,7 +117,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
      * The NIO {@link Selector}.
      */
     private Selector selector;
-    private Selector unwrappedSelector;
+    private Selector unwrappedSelector;                 // 原生未包装的Selector
     private SelectedSelectionKeySet selectedKeys;       // 缓存上次选到的SelectionKey？
 
     private final SelectorProvider provider;
