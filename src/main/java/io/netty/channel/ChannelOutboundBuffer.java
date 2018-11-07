@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 import static java.lang.Math.min;
 
-/** 用来存储待发送的outBound消息
+/** 用来存储待发送的outBound消息，循环数组
  * (Transport implementors only) an internal data structure used by {@link AbstractChannel} to store its pending
  * outbound write requests.
  * <p>

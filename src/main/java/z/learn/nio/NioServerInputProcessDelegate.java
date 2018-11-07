@@ -25,7 +25,7 @@ public class NioServerInputProcessDelegate {
                 ByteBuffer readBuffer = ByteBuffer.allocate(1024);
                 int readBytes = sc.read(readBuffer);    // 读取从socket，存入readBuffer
                 if (readBytes > 0) {                    // 有读取到数据
-                    readBuffer.flip();
+                    readBuffer.flip();                  // 原生NIO，channel只有一个position标记，需要flip之后把
 
                     byte[] bytes = new byte[readBuffer.remaining()];
                     readBuffer.get(bytes);
@@ -49,7 +49,7 @@ public class NioServerInputProcessDelegate {
             ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
             buffer.put(bytes);
             buffer.flip();
-            sc.write(buffer);
+            sc.write(buffer);       // 原生socketChannel没有flush操作，是netty加入的缓存功能，最后通过flush代理到SocketChannel上，实际写出去数据
         }
     }
 }

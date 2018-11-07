@@ -18,10 +18,10 @@ package io.netty.channel.socket.nio;
 import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelMetadata;
 import io.netty.channel.ChannelOutboundBuffer;
-import io.netty.util.internal.SocketUtils;
-import io.netty.channel.nio.AbstractNioMessageChannel;
 import io.netty.channel.socket.DefaultServerSocketChannelConfig;
 import io.netty.channel.socket.ServerSocketChannelConfig;
+import io.netty.util.internal.SocketUtils;
+import io.netty.channel.nio.AbstractNioMessageChannel;
 import io.netty.util.internal.PlatformDependent;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -138,11 +138,11 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
 
     @Override
     protected int doReadMessages(List<Object> buf) throws Exception {
-        SocketChannel ch = SocketUtils.accept(javaChannel());
+        SocketChannel ch = SocketUtils.accept(javaChannel());      // accept创建Socket连接
 
         try {
             if (ch != null) {
-                buf.add(new NioSocketChannel(this, ch));
+                buf.add(new NioSocketChannel(this, ch));    // ServerSocket accept接受，然后创建一个新的NioSocketChannel
                 return 1;
             }
         } catch (Throwable t) {
@@ -162,7 +162,7 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
     @Override
     protected boolean doConnect(
             SocketAddress remoteAddress, SocketAddress localAddress) throws Exception {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();                      // 客户端socket需要实现的方法，ServerSocket不需要实现
     }
 
     @Override

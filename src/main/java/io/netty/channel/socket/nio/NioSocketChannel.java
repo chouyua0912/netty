@@ -371,10 +371,10 @@ public class NioSocketChannel extends AbstractNioByteChannel implements io.netty
     }
 
     @Override
-    protected void doWrite(ChannelOutboundBuffer in) throws Exception {
+    protected void doWrite(ChannelOutboundBuffer in) throws Exception {         // 写数据  内部实现细节，不是对外公开的接口
         SocketChannel ch = javaChannel();
         int writeSpinCount = config().getWriteSpinCount();
-        do {
+        do {                        // 循环次数由 writeSpinCount 来控制
             if (in.isEmpty()) {
                 // All written so clear OP_WRITE
                 clearOpWrite();
@@ -385,7 +385,7 @@ public class NioSocketChannel extends AbstractNioByteChannel implements io.netty
             // Ensure the pending writes are made of ByteBufs only.
             int maxBytesPerGatheringWrite = ((NioSocketChannelConfig) config).getMaxBytesPerGatheringWrite();
             ByteBuffer[] nioBuffers = in.nioBuffers(1024, maxBytesPerGatheringWrite);
-            int nioBufferCnt = in.nioBufferCount();
+            int nioBufferCnt = in.nioBufferCount();                             // 待写的总数
 
             // Always us nioBuffers() to workaround data-corruption.
             // See https://github.com/netty/netty/issues/2761
@@ -400,7 +400,7 @@ public class NioSocketChannel extends AbstractNioByteChannel implements io.netty
                     // to check if the total size of all the buffers is non-zero.
                     ByteBuffer buffer = nioBuffers[0];
                     int attemptedBytes = buffer.remaining();
-                    final int localWrittenBytes = ch.write(buffer);
+                    final int localWrittenBytes = ch.write(buffer);             // 用Java原生的SocketChannel写ByteBuffer数据
                     if (localWrittenBytes <= 0) {
                         incompleteWrite(true);
                         return;

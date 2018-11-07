@@ -244,7 +244,7 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
             // Should not reach here.
             throw new Error();
         }
-        return WRITE_STATUS_SNDBUF_FULL;
+        return WRITE_STATUS_SNDBUF_FULL;    // Integer.MAX_VALUE;
     }
 
     @Override
@@ -258,7 +258,7 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
                 // Directly return here so incompleteWrite(...) is not called.
                 return;
             }
-            writeSpinCount -= doWriteInternal(in, msg);     // 写消息
+            writeSpinCount -= doWriteInternal(in, msg);     // 写消息， writeSpinCount减去成功写掉的数值
         } while (writeSpinCount > 0);       // 写
 
         incompleteWrite(writeSpinCount < 0);    // 不完整的写
@@ -329,7 +329,7 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
         }
         final int interestOps = key.interestOps();
         if ((interestOps & SelectionKey.OP_WRITE) == 0) {
-            key.interestOps(interestOps | SelectionKey.OP_WRITE);
+            key.interestOps(interestOps | SelectionKey.OP_WRITE);       // 注册对写事件感兴趣，会在Channel可以写的时候被设置
         }
     }
 
