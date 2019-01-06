@@ -271,7 +271,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
      * Create a new {@link Channel} and bind it.
      */
     public ChannelFuture bind(SocketAddress localAddress) {
-        validate();
+        validate();             // 简单的参数非空检查
         if (localAddress == null) {
             throw new NullPointerException("localAddress");
         }
@@ -279,10 +279,10 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     }
 
     private ChannelFuture doBind(final SocketAddress localAddress) {
-        final ChannelFuture regFuture = initAndRegister();
+        final ChannelFuture regFuture = initAndRegister();  // TODO ???
         final Channel channel = regFuture.channel();
         if (regFuture.cause() != null) {
-            return regFuture;
+            return regFuture;   // 注册失败了，regFuture的cause不为空，直接返回regFuture表示的bind结果
         }
 
         if (regFuture.isDone()) {
@@ -291,8 +291,8 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             doBind0(regFuture, channel, localAddress, promise);
             return promise;
         } else {
-            // Registration future is almost always fulfilled already, but just in case it's not.
-            final PendingRegistrationPromise promise = new PendingRegistrationPromise(channel);
+            // Registration future is almost always fulfilled already, but just in case it's not.       注册还没有完成，注册监听
+            final PendingRegistrationPromise promise = new PendingRegistrationPromise(channel); // 实现了ChannelFuture接口，返回可以获取到执行结果的数据结构给调用方
             regFuture.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
@@ -317,8 +317,8 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {
-            channel = channelFactory.newChannel();
-            init(channel);
+            channel = channelFactory.newChannel();/** {@link ReflectiveChannelFactory.newChannel()} NioServerSocketChannel 反射，实例化Channel**/
+            init(channel);  // ServerChannel和客户端Channel的初始化方法不一样，留给子类实现
         } catch (Throwable t) {
             if (channel != null) {
                 // channel can be null if newChannel crashed (eg SocketException("too many open files"))
@@ -456,7 +456,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     private static void setChannelOption(
             Channel channel, ChannelOption<?> option, Object value, InternalLogger logger) {
         try {
-            if (!channel.config().setOption((ChannelOption<Object>) option, value)) {
+            if (!channel.config().setOption((ChannelOption<Object>) option, value)) {   // NioServerSocketChannel
                 logger.warn("Unknown channel option '{}' for channel '{}'", option, channel);
             }
         } catch (Throwable t) {

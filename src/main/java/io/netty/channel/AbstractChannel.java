@@ -720,7 +720,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                             doClose0(promise);
                         } finally {
                             // Call invokeLater so closeAndDeregister is executed in the EventLoop again!
-                            invokeLater(new Runnable() {
+                            invokeLater(new Runnable() {            // 向自己提交一个稍后执行的任务
                                 @Override
                                 public void run() {
                                     if (outboundBuffer != null) {

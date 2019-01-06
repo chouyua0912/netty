@@ -38,7 +38,9 @@ public class DiscardServer {
                     .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
 
             // Bind and start to accept incoming connections.
-            ChannelFuture f = b.bind(port).sync(); // (7)
+            ChannelFuture f = b.bind(port).sync(); // (7)       任何IO操作都是异步的，会返回一个ChannelFuture
+/*            ChannelFuture f0 = b.bind(port);
+            ChannelFuture f = f0.sync(); // (7)*/
 
             // Wait until the server socket is closed.
             // In this example, this does not happen, but you can do that to gracefully

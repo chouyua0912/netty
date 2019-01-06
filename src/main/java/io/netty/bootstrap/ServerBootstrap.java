@@ -73,11 +73,11 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
     }
 
     /**
-     * Set the {@link EventLoopGroup} for the parent (acceptor) and the child (client). These
+     * Set the {@link EventLoopGroup} for the parent (acceptor) and the child (client). These           绑定parent和child group
      * {@link EventLoopGroup}'s are used to handle all the events and IO for {@link ServerChannel} and
      * {@link Channel}'s.
      */
-    public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup) {
+    public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup) {   // builder模式，参数很多时候，替代constructor
         super.group(parentGroup);
         if (childGroup == null) {
             throw new NullPointerException("childGroup");
@@ -141,7 +141,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
     void init(Channel channel) throws Exception {
         final Map<ChannelOption<?>, Object> options = options0();
         synchronized (options) {
-            setChannelOptions(channel, options, logger);
+            setChannelOptions(channel, options, logger);    // 初始化options，比如Backlog
         }
 
         final Map<AttributeKey<?>, Object> attrs = attrs0();
@@ -149,7 +149,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             for (Entry<AttributeKey<?>, Object> e: attrs.entrySet()) {
                 @SuppressWarnings("unchecked")
                 AttributeKey<Object> key = (AttributeKey<Object>) e.getKey();
-                channel.attr(key).set(e.getValue());
+                channel.attr(key).set(e.getValue());        // 初始化attribute
             }
         }
 
